@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 · 织见 - 东莞德永佳纺织制衣有限公司</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="login-body">
+<div class="login-wrap">
+  <div class="login-brand">
+    <div class="login-logo">织</div>
+    <div>
+      <div class="login-product">织见 · 经营智能分析平台</div>
+      <div class="login-company">东莞德永佳纺织制衣有限公司</div>
+    </div>
+  </div>
+  <div class="login-card">
+    <h1 class="login-title">账号登录</h1>
+    <p class="login-sub">请输入企业账号与密码</p>
+    <form id="loginForm" autocomplete="off">
+      <label class="field-label" for="username">用户名</label>
+      <input class="text-input" id="username" name="username" placeholder="请输入用户名" autocomplete="username" required>
+      <label class="field-label" for="password">密码</label>
+      <input class="text-input" type="password" id="password" name="password" placeholder="请输入密码" autocomplete="current-password" required>
+      <div class="login-error" id="loginError" hidden></div>
+      <button class="btn-primary btn-block" type="submit" id="loginBtn">登 录</button>
+    </form>
+  </div>
+  <p class="login-note">本平台为企业内部模拟系统，公司名称、岗位与权限均为项目演示配置，不代表该公司真实内部制度。</p>
+</div>
+<script>
+const form=document.getElementById('loginForm');
+const errorBox=document.getElementById('loginError');
+const btn=document.getElementById('loginBtn');
+form.addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  errorBox.hidden=true;
+  btn.disabled=true; btn.textContent='登录中…';
+  try{
+    const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username:form.username.value.trim(),password:form.password.value})});
+    if(r.ok){ location.href='/app'; return; }
+    const data=await r.json().catch(()=>({}));
+    errorBox.textContent=data.detail||('登录失败（'+r.status+'）'); errorBox.hidden=false;
+  }catch(err){ errorBox.textContent='网络错误，请稍后重试'; errorBox.hidden=false; }
+  btn.disabled=false; btn.textContent='登 录';
+});
+</script>
+</body>
+</html>
