@@ -1,0 +1,35 @@
+[project]
+name = "textile-insight-agent"
+version = "1.0.0"
+description = "Textile manufacturing ChatBI with MySQL, Milvus and LangGraph"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.141.1",
+    "openai==3.13.0",
+    "pydantic==2.13.5",
+    "pymysql==1.2.0",
+    "python-dotenv==1.2.3",
+    "uvicorn==0.52.4",
+    "pymilvus==2.6.17",
+    "langgraph==1.2.11",
+    "sqlglot==30.18.0",
+    "cryptography==50.0.1",
+    "httpx==0.28.1",
+    "bm25s>=0.3.11",
+    "jieba>=0.42.1",
+    "arq>=0.28.0",
+    "redis>=5.3.1",
+]
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple/"
+default = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests_textile"]

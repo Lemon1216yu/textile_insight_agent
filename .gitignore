@@ -1,0 +1,14 @@
+__pycache__/
+.env
+.venv/
+data/
+chroma_db/
+.vscode/
+artifacts/
+.pytest_cache/
+*.log
+frontend/node_modules/
+static/portal/
+.env.*
+!.env.example
+!*.example

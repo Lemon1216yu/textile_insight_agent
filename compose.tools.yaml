@@ -1,0 +1,14 @@
+# Independent developer tool; not mounted in the business application's website.
+name: textile-insight
+services:
+  attu:
+    image: zilliz/attu:v2.6.3
+    ports: ["127.0.0.1:3018:3000"]
+    environment:
+      MILVUS_URL: milvus:19530
+    networks: [business]
+    restart: unless-stopped
+networks:
+  business:
+    external: true
+    name: textile-insight_default
