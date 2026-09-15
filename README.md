@@ -53,7 +53,7 @@ docker compose stop
 
 ## 新机器初始化
 
-需要 Python 3.12、uv、Docker Desktop Linux 容器以及有效模型密钥。项目只读取 `DEEPSEEK_API_KEY` 与 `DASHSCOPE_API_KEY`，不将它们复制到源码。现有环境已实测两者可用。
+需要 Python 3.12、uv、Docker Desktop Linux 容器以及有效模型密钥。生成与向量统一使用 `DASHSCOPE_API_KEY`（百炼，可通过 `TEXTILE_LLM_API_KEY` 覆盖生成侧），密钥只从环境变量或本地 `.env` 读取，不入源码。`DEEPSEEK_API_KEY` 已弃用，项目不再读取。生成模型按 `TEXTILE_LLM_MODELS` 配置候选链，免费额度耗尽时自动切换到下一个模型。
 
 ```powershell
 uv sync --locked
