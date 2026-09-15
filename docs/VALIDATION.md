@@ -46,6 +46,9 @@
 | 混合检索对比（104 例） | `scripts/compare_retrieval.py` | 向量 0.990/0.971 → 混合 **1.000/0.981**（recall@4/hit@1） | `artifacts/retrieval-comparison.json` |
 | 并发 20 请求（HTTP + arq） | `scripts/validate_concurrency.py` | 20/20 完成、0 缓存命中；admission 最大 **0.266s**（三段修复：5.219s → 3.125s → 0.266s）；排队中位数 2.22s（修复前 4.13s） | `artifacts/concurrency-20.json`；修复前基线 `concurrency-20-quota-blocked.json` |
 | 提交延迟隔离测量（无模型） | `scripts/probe_http.py` | 单请求 186ms → **49ms**；20 并发最大 2422ms → **493ms**（连接池修复） | 命令输出 |
+| **52 张业务表覆盖**（确定性，无模型） | `scripts/validate_table_coverage.py` | **52/52**：建表有数据、字段与目录一致、每表表级+字段级向量齐全（集合 388 条）；表名提问 hit@4 **52/52**、中文描述提问 hit@4 **52/52**（52 种不同 top4 组合，非恒返回同一组） | `artifacts/table-coverage-52.json` |
+| **权限矩阵**（逐角色逐表 312 项） | 同上 | **312/312** 与 `TABLES_BY_ROLE` 一致；其中 89 项为按角色正确拒绝；隐藏字段拦截 5 例；sales 区域过滤 19 例 | 同上 |
+| **52 表真实问数抽样** | `同上 --llm-sample 8` | **8/8**（每业务域抽 1 张，NL→SQL→执行→比对全通） | 同上 |
 | 自动化测试 | `pytest tests_textile -q` | **58 passed** | 本文件所述 |
 | 指标发布幂等 | `scripts/publish_metrics.py` | 首次发布 1 条变更；重复执行 `unchanged`、零写入 | 命令输出 |
 | 索引精确性 | `scripts/ensure_index.py` | `Milvus index ready: 388 vectors match 388 documents` | 命令输出 |

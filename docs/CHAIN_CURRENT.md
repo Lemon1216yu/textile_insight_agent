@@ -91,7 +91,7 @@ POST /api/jobs → 202 + job_id（同步部分在线程池执行，不阻塞事�
 ## 已知边界（不得外推）
 
 - 40 例评测为**合成功能回归**，不是生产准确率，也不代表企业准确率；样本由本项目的指标口径自动生成。
-- **50+ 表（当前 52 张）**已建表、已向量化、可查询；评测只覆盖其中 8 张扩展表（sales_quotes/machine_downtime/goods_receipts/stock_counts/finished_inspections/accounts_receivable/energy_readings/cost_allocations），全表端到端未验证。
+- **50+ 表（当前 52 张）**：覆盖验收 **52/52**（建表有数据、字段与目录一致、每表表级+字段级向量、表名与中文描述两种提问均 hit@4）；权限矩阵 **312/312**（含 89 项按角色正确拒绝、隐藏字段拦截 5 例、sales 区域过滤 19 例）；真实问数抽样 **8/8**（每业务域 1 张）。**仍未对 52 张表逐张跑生成模型评测**，评测覆盖仍以 40 例为主（其中 8 张扩展表带 join）。
 - 报告由模型依据结果生成，目前没有程序化逐项数值/因果校验；不得把报告质量等同于 SQL 执行准确率。
 - 浏览器端到端本轮**未重跑**：只验证了 HTTP 层（`/`、`/app`、`/portal/` 与前端产物 200）与 API 层真实查询。
 - 百炼免费额度**按模型独立计量**且会耗尽：实测 qwen3.7-flash 额度用尽后切到 qwen3.8-flash，本轮又把 3.8-flash 免费额度打满，自动降级到 `qwen3.8-max-0902` 继续完成评测（`artifacts/evaluation-expanded-fallback-quota.json`）。
