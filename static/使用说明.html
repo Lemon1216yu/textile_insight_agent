@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>织见 · 经营分析平台使用说明</title>
+<style>
+:root{--ink:#192e38;--green:#12675d;--line:#d8e2de;--paper:#fffdf8}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f3f3ed;color:var(--ink);font:16px/1.8 system-ui,"Microsoft YaHei",sans-serif}main,header>div,nav>div{max-width:1040px;margin:auto;padding:0 32px}header{background:#153c3a;color:white;border-top:7px solid #e5ba6e;padding:48px 0 38px}header small,.tag{letter-spacing:.13em;font-size:12px;font-weight:700;color:#afd7c9}h1{font-size:clamp(32px,5vw,55px);line-height:1.15;margin:16px 0}header p{max-width:690px;color:#e1eee9}a{color:var(--green);text-underline-offset:4px}.button{display:inline-block;background:#f4d095;color:#173735;padding:7px 17px;border-radius:5px;font-weight:700;text-decoration:none}nav{background:#fff;border-bottom:1px solid var(--line)}nav>div{display:flex;flex-wrap:wrap;gap:8px 22px;padding-block:12px}nav a{font-size:14px}main{padding-block:24px 60px}section{background:var(--paper);padding:28px 34px;border:1px solid var(--line);border-radius:10px;margin:16px 0}h2{margin:0 0 12px;font-size:25px}h3{font-size:18px;margin:20px 0 5px}p,ul,ol{margin:7px 0}li{margin:.4em 0}.tag{color:var(--green)}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.card,aside{background:#edf4ef;padding:13px 16px;border-radius:6px}.card strong{display:block}.card a{font-size:14px}aside{margin-top:16px;border-left:4px solid #639989}.question{background:#f6efde;border-left:4px solid #bf9253;padding:9px 15px;margin:9px 0}.table{overflow:auto}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{color:var(--green);background:#eef3ed}code{font-family:Consolas,monospace;overflow-wrap:anywhere}pre{white-space:pre-wrap;background:#173937;color:#f5f6ee;padding:15px 18px;border-radius:6px;line-height:1.55}footer{font-size:13px;color:#4c6361}a:focus-visible{outline:3px solid #ad7727}@media(max-width:700px){main,header>div,nav>div{padding-inline:14px}.cards{grid-template-columns:1fr}section{padding:18px}h2{font-size:21px}}@media print{body,section{background:white}header{background:white;color:black;padding:8px 0}header p,header small{color:black}nav,.button{display:none}main,section{padding:8px;border:0}h2,h3{break-after:avoid}.card,tr,pre,aside{break-inside:avoid}a{color:black}}
+</style>
+<header><div><small>织见　/　项目介绍与使用指南</small><h1>把经营问题问给数据</h1><p>织见是一个面向纺织制造企业的经营分析平台。用一个例子了解它：经营负责人问“8 月赚了多少钱”，系统怎样把这句话变成一笔可以核对的账？</p><a class="button" href="#walk">跟着示例操作 →</a></div></header>
+<nav aria-label="手册目录"><div><a href="#start">① 项目是什么</a><a href="#flow">② 怎么得到答案</a><a href="#walk">③ 怎么用</a><a href="#references">附录与部署</a></div></nav>
+<main><section id="start"><span class="tag">01　项目介绍</span><h2>让业务人员用中文查数，让数字有口径可查</h2>
+<p>销售订单记录收入和成本，财务费用记在另一张表里。经营负责人只想知道一个月的经营利润，过去往往要请人导出两份报表，再确认月份、范围和公式。织见把这套查询流程做成工作台：业务人员提出问题，系统按他的岗位权限查数，返回结果；财务可以在指标中心用同一口径复核。</p>
+<div class="cards"><div class="card"><strong>看现状 · 经营总览</strong>先看本岗位范围内的收入、生产或库存概况。</div><div class="card"><strong>查数字 · 智能问数</strong>写清期间和指标，获取查询结果、单位和口径说明。</div><div class="card"><strong>看变化 · 经营分析</strong>比较两个期间，把收入、成本、费用的变化拆开看，再汇总成报告。</div></div>
+<p>当前是可在 Windows 本地运行的 MVP，内置 2026 年 3—8 月的模拟业务数据。MySQL 保存业务记录；Milvus 保存表、字段和指标的说明，帮助系统找对数据。演示环境没有连接真实企业 ERP。</p></section>
+<section id="flow"><span class="tag">02　工作流程</span><h2>从一句问题到一笔账</h2>
+<div class="question">2026 年 8 月的经营利润是多少？</div>
+<ol><li><b>先理解问题。</b>系统校验输入，规范问法，识别是查一个数还是需要多步分析，保留“2026 年 8 月”和“经营利润”。如果只问“那上个月呢”且缺少指标，先请用户补充。</li>
+<li><b>准备表、字段和指标公式。</b>明确的单表查询只提供必要的表结构。经营利润涉及订单和费用，系统要寻找相关表、字段与关联，并从指标知识库取得 FIN-005 的口径：销售毛利减期间费用，两边分别汇总。</li>
+<li><b>生成并执行查询。</b>把问题、表结构、指标口径统一交给模型生成 SQL，再检查只读操作、角色、区域和字段权限，检查通过后才交给 MySQL。即便用户问得出“利润”，也不等于他的岗位有权看成本。</li>
+<li><b>返回数字和依据。</b>全公司默认样本算出 <strong>287,590 元</strong>。用户可以看结果表，去指标中心核对计算期间和公式。这里的“经营利润”是项目的管理口径，并非税后净利润。</li></ol>
+<aside><b>如果问题变成“为什么利润变了”？</b> 系统通过 Plan-and-Execute 先列子任务，例如分别比较两个期间的销售毛利和费用。每个数据查询都复用上面的流程，最后依据各步结果汇总报告。数据能说明哪项变化贡献最大；没有证据的业务原因仍需人工核实。</aside></section>
+<section id="walk"><span class="tag">03　业务操作</span><h2>第一次用：先问、再验、最后分析</h2>
+<ol><li><b>登录经营总览。</b> 在已部署的电脑打开<a href="http://127.0.0.1:8018/">经营工作台</a>，演示账号 <code>executive</code>，初始密码 <code>demo123</code>。销售、生产、仓储登录后看到的菜单和数据范围不同。</li>
+<li><b>点「智能问数」，提交下面的问题。</b><div class="question">2026年8月经营利润（管理口径）是多少元？仅返回这个指标。</div>等待任务完成，查看结果表和处理进度。默认样本的全公司经营利润是 <strong>287,590 元</strong>。不是税后净利润，也不是这家企业的真实业绩。</li>
+<li><b>点「指标中心」，独立核对。</b> 搜索 <code>FIN-005</code> → 点击「经营利润（管理口径）」→ 选 <code>2026-08</code> →「计算」。它按登记公式计算，不依赖模型猜公式：先算已交付订单的销售毛利，再减同期间费用。与上一步核对时要用同一账号、期间和单位。</li>
+<li><b>点「经营分析」，问一个需要拆解的问题。</b><div class="question">比较2026年7—8月与5—6月的经营利润，分别列出销售毛利和期间费用的变化，说明哪一项影响更大。</div>打开处理进度和各步骤结果，对照数字读结论。「个人报告」可回看近期任务，已完成的分析可下载报告。每次提交是独立问题，不能只写“那上个月呢”。</li></ol>
+<h3>换个岗位，看看权限差异</h3><p><code>sales_east</code> 是华东销售经理，可查授权区域销售数据，不能看销售成本或毛利。<code>production</code> 看生产，<code>warehouse</code> 看库存，<code>finance</code> 看财务指标。以上为本地演示账号，初始密码相同。只有 <code>admin</code> 能进入「账户管理」「审计记录」「模型设置」。</p></section>
+<section id="references"><span class="tag">附录</span><h2>需要部署、改数据或对接企业系统时再看</h2><p><a href="#install">新电脑安装与网页配置密钥</a>　·　<a href="#data">模拟数据从哪来</a>　·　<a href="#change">改数据还是改公式</a>　·　<a href="#connect">企业对接</a>　·　<a href="#faq">常见问题</a></p></section>
+<section id="data"><span class="tag">附录 A　数据来历</span><h2>屏幕上的数字，究竟从哪来？</h2><p>安装时由 Python 按固定随机种子生成，没有下载企业订单，也没有让大模型临时编数。问数读的是数据库。默认新库有 <strong>52 张业务表、1,461 行业务数据</strong>，以下数量不含账号和审计记录。</p>
+<div class="table"><table><thead><tr><th>数据</th><th>生成方式与规模</th><th>在系统里的作用</th></tr></thead><tbody>
+<tr><td>核心交易与主数据</td><td><code>scripts/seed.py</code>：客户 6、产品 6、供应商 3、订单 540、生产批次 108、采购 108、库存快照 108、费用 54，共 933 行。</td><td>存 MySQL。每月 90 条销售记录，用于收入、交付、利润和库存核算。</td></tr>
+<tr><td>扩展业务记录</td><td><code>scripts/seed_extended.py</code>：44 张表各 12 行，共 528 行，包括出货、质检、停机和盘点。</td><td>存 MySQL。用于验证跨表关联和权限，并非完整可勾稽的真实 ERP 流水。</td></tr>
+<tr><td>指标知识</td><td><code>textile/metric_catalog.py</code> 编写 32 条指标：公式、单位、过滤条件、时间字段、适用岗位。发布到 MySQL 的 <code>metric_registry</code>。</td><td>回答“怎么算”。例如确认销售收入按实际交付日，不按下单日。</td></tr>
+<tr><td>检索向量</td><td>一张表说明、一条字段说明、一条指标定义分别是一份文档：52 + 304 + 32 = 388 条，256 维。</td><td>存 Milvus 集合 <code>textile_schema_metrics_v2</code>。用于找相关表、字段和口径，不存订单明细。</td></tr></tbody></table></div>
+<aside><b>为什么能分析出成本变化？</b> 脚本刻意把 7、8 月前两款全棉产品的模拟单位成本乘以 1.25，并把对应生产批次的疵损比例从 2.5% 设为 7%。这是为了演示变化可被追踪，不是对真实公司的判断。</aside></section>
+<section id="change"><span class="tag">附录 B　维护模拟数据</span><h2>我要改的是一笔记录，还是所有人的计算口径？</h2>
+<div class="table"><table><thead><tr><th>目的</th><th>改哪里</th><th>怎样看见变化</th></tr></thead><tbody>
+<tr><td>改当前库里一笔费用</td><td>用获准写入演示库的账号在 Navicat 改 <code>finance_expenses.amount</code>。先记下主键和原值；<code>textile_reader</code> 只能读。</td><td>提交后用相同月份重算 FIN-005。例如 8 月费用增加 100 元，其他数据不变，全公司经营利润应减少 100 元。不必重建向量，旧报告不会改写。</td></tr>
+<tr><td>让下次安装生成另一批数据</td><td>改核心或扩展生成脚本中的月份、数量和金额规则，在隔离的新库验证。</td><td>核心脚本检测 <code>seed_version</code>，扩展脚本只填空表。只重启或重跑脚本不会覆盖已有交易。</td></tr>
+<tr><td>改变公式或时间口径</td><td>改 <code>metric_catalog.py</code>，执行 <code>uv run python scripts/publish_metrics.py</code>。</td><td>对照指标中心、智能问数和看板；看板有独立 SQL，改公式不代表所有看板自动同步。</td></tr>
+<tr><td>新增表、字段或换数据期间</td><td>迁移 MySQL 结构，更新目录、关联、岗位权限；结构说明变更后运行 <code>uv run python scripts/build_index.py</code>。更换期间还要更新实际数据、默认月份及展示文案。</td><td>重新启动 API 与 worker，前端改过则重新构建；分别用有权和无权账号验证。</td></tr></tbody></table></div>
+<p><b>独立查看：</b>Navicat 连接 <code>127.0.0.1:3318</code>，库名 <code>textile_insight</code>；只读账号的密码见该部署本地 .env 中的 TEXTILE_DB_PASSWORD。可选向量管理台：先启动主平台，再执行 <code>docker compose -f compose.tools.yaml up -d</code>，打开 <a href="http://127.0.0.1:3018/">Attu</a>，使用预设的 <code>milvus:19530</code>。数据库管理不在业务网页内。</p></section>
+<section id="install"><span class="tag">附录 C　管理员操作</span><h2>在另一台 Windows 电脑上运行</h2><p>准备 Git、Python 3.12、uv、Node.js 22.12+（含 npm）、Docker Desktop（Linux 容器）和自己的百炼 API Key。先启动 Docker Desktop，确认 <code>docker info</code> 有 Server，再依次在 PowerShell 执行：</p>
+<pre><code>git clone https://github.com/Lemon1216yu/textile_insight_agent.git
+cd textile_insight_agent
+uv sync --locked
+uv run python scripts/configure.py
+docker compose up -d --wait --wait-timeout 180
+uv run python scripts/seed.py
+New-Item -ItemType Directory -Force artifacts | Out-Null
+.\start.ps1</code></pre>
+<p><b>密钥在页面填写：</b>打开工作台 → <code>admin / demo123</code> 登录 → 左侧「模型设置」→ 粘贴自己的百炼中国内地（北京）Key →「测试并保存」。看到“索引已就绪”后再问数。首次验证与建索引消耗少量模型额度。密钥不回显，不用每个用户各填一遍。</p>
+<p>以后启动：<code>.\start.ps1</code>；停止应用：<code>.\stop.ps1</code>；应用和容器一起停止并保留数据卷：<code>.\stop.ps1 -Infrastructure</code>。保管好自动生成的 .env 和页面配置的 .env.model-key，不随手册分发。</p></section>
+<section id="connect"><span class="tag">附录 D　接真实业务</span><h2>接企业系统，要另外做什么？</h2><p>网页填 Key 只接通模型，<b>没有接通 ERP，也没有自动导入企业数据</b>。建议先选一个区域、一个月、一个指标（例如华东销售收入），按下列路径试点：</p>
+<ol><li><b>拿两份材料：</b>IT 提供获准的只读接口、视图或脱敏样本及字段字典；财务提供同期间同区域的权威报表。</li><li><b>对齐一行的含义：</b>如果一张订单分三次交货，按出货明细唯一键和实际交付金额入库，不能三次复制整单金额。同时约定退货、币种、税额和月份归属。</li><li><b>同步到独立分析库：</b>源系统 → 暂存与去重 → 分析库 → Agent 只读查询。需按实际接口开发同步器及独立迁移流程，禁用演示填数。不要把这套演示启动脚本直接指向生产 ERP。</li><li><b>验收后再开放：</b>财务报表、分析库 SQL、指标试算、智能问数四方对账；验证区域和成本字段权限。多步报告可能向模型发送 SQL 和结果行，先确定企业允许的数据范围。</li></ol></section>
+<section id="faq"><span class="tag">附录 E　自查</span><h2>常见问题</h2><h3>双击手册能看，为什么打不开工作台？</h3><p>手册只是网页文件。127.0.0.1 指当前电脑；请在已部署并运行服务的电脑上打开。先看 <a href="http://127.0.0.1:8018/api/health">健康检查</a>，确认 mysql、milvus、redis、worker 均为 true。</p><h3>指标试算成功，为什么问数失败？</h3><p>试算直接按公式查库；自然语言问数还需要生成模型和可用额度。管理员检查「模型设置」，确认账号已开通生成模型和 Embedding。任务一直等待时看 worker 状态与 artifacts/worker.err.log。</p><h3>为什么没有本月数据，或者销售账号查不到全公司利润？</h3><p>默认样本只有 2026 年 3—8 月，请写绝对月份。销售岗位受区域与成本字段权限限制，要核对全公司经营利润请选择获准的经营负责人或财务账号。</p><h3>刚改了数据，为什么还看到旧数字？</h3><p>先确认改的是正确库、修改已提交，且账号、月份和指标一致。历史报告保留生成时结果；同一问数可能复用最长 120 秒缓存。先在指标中心重新计算，再提交新任务。</p></section>
+<footer>织见 · 本地模拟业务环境　|　<a href="https://github.com/Lemon1216yu/textile_insight_agent">代码与 README</a>　·　<a href="https://github.com/Lemon1216yu/textile_insight_agent/blob/main/docs/DATA_INTEGRATION.md">字段映射与对账 SQL</a>　·　可使用浏览器「打印」保存为 PDF。</footer></main></html>
